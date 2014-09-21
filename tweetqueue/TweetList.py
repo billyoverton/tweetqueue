@@ -119,3 +119,35 @@ class TweetList(object):
 
         c.close()
         return tweet
+
+    def __iter__(self):
+        c = self.connection.cursor()
+
+        for tweet_id, tweet in c.execute("SELECT id, message from tweets"):
+            yield (tweet_id, tweet)
+
+        c.close()
+    def delete(self, tweet_id):
+        """Deletes a tweet from the list with the given id"""
+        c = self.connection.cursor()
+
+        try:
+            tweet = c.execute("SELECT id, message, previous_tweet, next_tweet from tweets WHERE id=?", (tweet_id,)).next()
+        except StopIteration:
+            raise ValueError("No tweets were found with that ID")
+
+        # Update linked list references
+        c.execute("UPDATE tweets set next_tweet=? WHERE id=?", (tweet[3], tweet[2]))
+        c.execute("UPDATE tweets set previous_tweet=? WHERE id=?", (tweet[2], tweet[3]))
+
+        if tweet[3] is None:
+            c.execute("UPDATE tweetlist SET tweet=? WHERE label='last_tweet'", (tweet[2],))
+
+        if tweet[2] is None:
+            c.execute("UPDATE tweetlist SET tweet=? WHERE label='first_tweet'", (tweet[3],))
+
+
+        c.execute("DELETE from tweets WHERE id=?", (tweet_id,))
+        self.connection.commit()
+        c.close()
+

@@ -141,5 +141,26 @@ def config(ctx):
         json.dump(config, f, indent=4, separators=(',',': '))
         f.close()
 
+@tweetqueue.command()
+@click.argument('tweet', type=int)
+@click.pass_context
+def delete(ctx,tweet):
+    """Deletes a tweet from the queue with a given ID"""
+    if not ctx.obj['DRYRUN']:
+        try:
+            ctx.obj['TWEETLIST'].delete(tweet)
+        except ValueError as e:
+            click.echo("Now tweet was found with that id.")
+            ctx.exit(1)
+    else:
+        click.echo("Not ran due to dry-run.")
+
+@tweetqueue.command()
+@click.pass_context
+def show(ctx):
+    """Prints out the current queue"""
+    for tweet in ctx.obj['TWEETLIST']:
+        click.echo("{0}: {1}".format(*tweet))
+
 if __name__ == '__main__':
     tweetqueue(obj={})

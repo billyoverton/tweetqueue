@@ -41,3 +41,7 @@ Use
 To add a message to your queue, use the queue command `tweetqueue queue "Hello, Twitter!"`. Messages added to your queue are not sent to twitter until the dequeue command is called. `tweetqueue dequeue` will take the first message in the queue and post it to your Twitter timeline. Messages are dequeued in the order they are added, in a first in first out order.
 
 If you want to bypass the queue, you can use `tweetqueue tweet "Hello, Twitter!"` This will immediately post `Hello, Twitter!` to your timeline.
+
+Managing Your Queue
+-------------------
+You can show your current queue with `tweetqueue show`. This will print out a list of the tweets and an associated id. You can remove a tweet from your queue using this id with `tweetqueue delete ID`.
