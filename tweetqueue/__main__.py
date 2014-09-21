@@ -1,7 +1,6 @@
 import click
 import tweepy
 import json
-import sqlite3
 import os.path
 from .TweetList import TweetList
 
@@ -18,6 +17,10 @@ def valid_tweet(message):
 @click.pass_context
 def tweetqueue(ctx, dry_run, config):
     ctx.obj['DRYRUN'] = dry_run
+
+    # If the subcommand is "config", bypass all setup code
+    if ctx.invoked_subcommand == 'config':
+        return
 
     # If the config file wasn't provided, attempt to load the default one.
     if config is None:
@@ -111,6 +114,28 @@ def dequeue(ctx):
         tweet = ctx.obj['TWEETLIST'].pop()
         ctx.obj['TWEEPY_API'].update_status(tweet)
 
+@tweetqueue.command()
+@click.pass_context
+def config(ctx):
+
+    home_directory = os.path.expanduser('~')
+    default_config_file = os.path.join(home_directory, '.tweetqueue')
+    default_database_file = os.path.join(home_directory, '.tweetqueue.db')
+
+    config = {}
+
+    config['API_KEY'] = click.prompt('API Key')
+    config['API_SECRET'] = click.prompt('API Secret')
+    config['ACCESS_TOKEN'] = click.prompt('Access Token')
+    config['ACCESS_TOKEN_SECRET'] = click.prompt('Access Token Secret')
+    config['DATABASE_LOCATION'] = click.prompt('Database', default=default_database_file)
+
+    config_file = click.prompt('\nSave to', default=default_config_file)
+
+    if click.confirm('Do you want to save this configuration?', abort=True):
+        f = open(config_file, 'wb')
+        json.dump(config, f, indent=4, separators=(',',': '))
+        f.close()
 
 if __name__ == '__main__':
     tweetqueue(obj={})
