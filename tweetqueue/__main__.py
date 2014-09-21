@@ -8,14 +8,16 @@ def valid_tweet(message):
     return len(message) <= 140
 
 @click.group()
-@click.option('--dry-run', is_flag=True, default=False)
+@click.option('--dry-run', is_flag=True, default=False, help='Runs commands without making changes')
 @click.option(
     '--config',
     envvar="TWEETQUEUE_CONFIG",
-    type=click.File('rb')
+    type=click.File('rb'),
+    help='Configuration file path'
 )
 @click.pass_context
 def tweetqueue(ctx, dry_run, config):
+    """A command line tool for time-delaying your tweets."""
     ctx.obj['DRYRUN'] = dry_run
 
     # If the subcommand is "config", bypass all setup code
@@ -73,6 +75,7 @@ def tweetqueue(ctx, dry_run, config):
 @click.argument('message')
 @click.pass_context
 def tweet(ctx, message):
+    """Sends a tweet directory to your timeline"""
     if not valid_tweet(message):
         click.echo("Message is too long for twitter.")
         click.echo("Message:" + message)
@@ -87,6 +90,7 @@ def tweet(ctx, message):
 @click.argument('message')
 @click.pass_context
 def queue(ctx, message):
+    """Adds a message to your twitter queue"""
     if not valid_tweet(message):
         click.echo("Message is too long for twitter.")
         click.echo("Message: " + message)
@@ -101,7 +105,7 @@ def queue(ctx, message):
 @tweetqueue.command()
 @click.pass_context
 def dequeue(ctx):
-
+    """Sends a tweet from the queue"""
     tweet =ctx.obj['TWEETLIST'].peek()
 
     if tweet is None:
@@ -117,7 +121,7 @@ def dequeue(ctx):
 @tweetqueue.command()
 @click.pass_context
 def config(ctx):
-
+    """Creates a tweetqueue configuration file"""
     home_directory = os.path.expanduser('~')
     default_config_file = os.path.join(home_directory, '.tweetqueue')
     default_database_file = os.path.join(home_directory, '.tweetqueue.db')
