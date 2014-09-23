@@ -75,7 +75,7 @@ def tweetqueue(ctx, dry_run, config):
 @click.argument('message')
 @click.pass_context
 def tweet(ctx, message):
-    """Sends a tweet directory to your timeline"""
+    """Sends a tweet directly to your timeline"""
     if not valid_tweet(message):
         click.echo("Message is too long for twitter.")
         click.echo("Message:" + message)
