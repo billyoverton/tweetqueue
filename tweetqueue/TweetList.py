@@ -79,7 +79,7 @@ class TweetList(object):
 
 
     def pop(self):
-        """Return first tweet in the list, storing history."""
+        """Return first tweet in the list."""
         c = self.connection.cursor()
 
         first_tweet_id = c.execute("SELECT tweet from tweetlist where label='first_tweet'").next()[0]

@@ -18,6 +18,7 @@ def valid_tweet(message):
 @click.pass_context
 def tweetqueue(ctx, dry_run, config):
     """A command line tool for time-delaying your tweets."""
+    ctx.obj = {}
     ctx.obj['DRYRUN'] = dry_run
 
     # If the subcommand is "config", bypass all setup code
@@ -75,7 +76,7 @@ def tweetqueue(ctx, dry_run, config):
 @click.argument('message')
 @click.pass_context
 def tweet(ctx, message):
-    """Sends a tweet directory to your timeline"""
+    """Sends a tweet directly to your timeline"""
     if not valid_tweet(message):
         click.echo("Message is too long for twitter.")
         click.echo("Message:" + message)
@@ -163,4 +164,4 @@ def show(ctx):
         click.echo("{0}: {1}".format(*tweet))
 
 if __name__ == '__main__':
-    tweetqueue(obj={})
+    tweetqueue()

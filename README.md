@@ -38,7 +38,7 @@ $ tweetqueue --config /path/to/your/config COMMAND
 
 Use
 ---
-To add a message to your queue, use the queue command `tweetqueue queue "Hello, Twitter!"`. Messages added to your queue are not sent to twitter until the dequeue command is called. `tweetqueue dequeue` will take the first message in the queue and post it to your Twitter timeline. Messages are dequeued in the order they are added, in a first in first out order.
+To add a message to your queue, use the queue command `tweetqueue queue "Hello, Twitter!"`. Messages added to your queue are not sent to Twitter until the dequeue command is called. `tweetqueue dequeue` will take the first message in the queue and post it to your Twitter timeline. Messages are dequeued in the order they are added, in a first in first out order.
 
 If you want to bypass the queue, you can use `tweetqueue tweet "Hello, Twitter!"` This will immediately post `Hello, Twitter!` to your timeline.
 
